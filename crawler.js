@@ -1,51 +1,60 @@
 var server = location.host;
-var startpage = 'http://www.kvtulder.nl/webcrawler/index.html';
+var startpage = 'index.html';
 var startkeys;
-var pages = [[startpage,startkeys,true]];
+var pages = [[startpage,startkeys,true,false]];//Opbouw array: url,metakeys,intern,gescand
 
 function scan()
 {
-	getLinks(startpage);
-	$(pages).each(function(index, element) {
-        alert(element[0] + " " + element[1] + " " + element[2]);
-    });
-}
-function getLinks(page)
-{
-	$.get(page,function(data)
+	
+	for(var i = 0;i<10;i++)
 	{
-		$(data).find('a').each(function(index, element) {
-			
-			if(inArray(String(element)))
-			{
-				var a;
-				if(!checkExternal(element)) a = [element,'placeholder',true];
-				else a = [element,'placeholder',false];
-				pages.push(a);
-			}
-        });
-	});
-}
-function inArray(arg1)
-{
-	var a = true;
-	for(i=0;i < pages.length; i++)
-	{
-		if(pages[i][0]==arg1)
+		console.log('e');
+		var allscanned = true;
+		this.pages = pages;
+		$.each(pages,function(index,page)
 		{
-		a = false;
-		}
+			if(page[2] && !page[3])
+			{
+				allscanned = false;
+				scanPage(page[0]);
+				page[3] = true;
+			}
+
+		});
+		if(allscanned) break;
 	}
-	return a;
+	
+	
+	
 }
-function checkExternal(href)
+function addPages()
 {
-	if(href.toLowerCase().indexOf(server)==-1)
+	
+	
+function scanPage(page)
+{
+	console.log('Started scanning page ' + page);
+	$.get(page, function(html) {
+    	$.each($(html).find('a'),function(index,url)
+		{
+		console.log('Link found ' + url);
+		var pageInformation = new Array(url,$('meta[name=kewwords]').attr("content"),true);
+		var inArray = false;
+		if(this.host !== server) pageInformation[2] = false;//Controleert of de link extern of intern is.
+
+		$.each(pages,function(index,url)
+		{
+			if(String(url[0]) == String(pageInformation[0])) inArray = true;
+		});
+		if(!inArray) pages.push(pageInformation);
+    });
+	});
+	
+}
+function view()
+{
+	$.each(pages,function(index,element)
 	{
-	return true;
-	}
-	else
-	{
-	return false;	
-	}
+		alert(element[0] + '   keys: ' + element[1]);
+	});
 }
