@@ -1,14 +1,21 @@
-function dbInsert(page, meta, local){
+
+function printEntry(page, intern, keywords){
 	
+	
+	document.writeln(" {\"page\":\" " +  page + "  \", \"intern\":\" " + intern + "  \", \"keywords\":\" " + keywords + " \"}, ");	
 }
 
-function dbRead(){
-
+function printLastEntry(page, intern, keywords){
+	
+	
+	document.writeln(" {\"page\":\" " +  page + "  \", \"intern\":\" " + intern + "  \", \"keywords\":\" " + keywords + " \"} ");	
+}
+function printStart(){
+	document.writeln("\"pages\":[");
 }
 
-function dbExists(page){
-
+function printEnd(){
+	document.writeln("]");
 }
-
 
  
